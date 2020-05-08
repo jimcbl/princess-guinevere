@@ -1,10 +1,5 @@
 const knightInput = "152 1 0 1 1";
 const journeyInput = "3 5";
-let result;
-
-let hp, level, remedy, maidenKiss, phoenixDown, maxhp;
-let knightArr = [];
-let journeyArr = [];
 
 const baseDamage = {
     1: 1,
@@ -14,6 +9,11 @@ const baseDamage = {
     5: 8.5,
 };
 
+let result;
+let hp, level, remedy, maidenKiss, phoenixDown, maxhp;
+let knightArr = [];
+let journeyArr = [];
+
 const preprocess = () => {
     knightArr = knightInput.split(" ").map((i) => Number(i));
     journeyArr = journeyInput.split(" ").map((i) => Number(i));
@@ -22,26 +22,21 @@ const preprocess = () => {
 };
 
 const calcResult = () => {
-    return parseInt(hp) + level + remedy + maidenKiss + phoenixDown;
+    const res = parseInt(hp) + level + remedy + maidenKiss + phoenixDown;
+    return res < 1 ? -1 : res;
 };
 const getDamage = (event, levelO) => {
-    // console.log("baseDamage", baseDamage[event]);
     return baseDamage[event] * 10 * levelO;
 };
 const handleEventFrom1to5 = (i, event) => {
     const index = i + 1;
     const b = index % 10;
     const levelO = index > 6 ? (b > 5 ? b : 5) : b;
-    // console.log("event", event);
-    // console.log("level", level);
-    // console.log("levelO", levelO);
-    // console.log("hp", hp);
 
+    if (level === levelO) return;
     if (level > levelO) {
         level = level + 1 > 10 ? 10 : level + 1;
-    }
-    if (level < levelO) {
-        // console.log("damage", getDamage(event, levelO));
+    } else {
         hp = parseInt(hp - getDamage(event, levelO));
         if (hp < 1) {
             if (phoenixDown < 1) return -1;
@@ -49,8 +44,6 @@ const handleEventFrom1to5 = (i, event) => {
             phoenixDown = phoenixDown - 1;
         }
     }
-
-    // console.log("afterHp", hp);
 };
 
 const calculateJouney = () => {
@@ -69,16 +62,14 @@ const main = () => {
     preprocess();
     calculateJouney();
     result = calcResult();
-    if (result < 1) result = -1;
-    console.log("endhp", hp);
-    console.log("result", result);
     handleHTML();
 };
 
 const handleHTML = () => {
+    console.log("endhp", hp);
+    console.log("result", result);
     $("#knight").html(knightInput);
     $("#journey").html(journeyInput);
-
     $("#result").html(result);
 };
 
